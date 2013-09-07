@@ -50,6 +50,11 @@ exports.parse = function(msg) {
         // Remove the sender
         var recipients = _(group.members).reject(function(el) { return el.email === msg.from_email; });
 
+        // Remove any email in the to: and in the group
+        _(msg.to).each(function(el) {
+          recipients = _(recipients).reject(function(el2) { return el[0] === el2.email; });
+        });
+
         mandrill('/messages/send', {
           message: {
             to: recipients,
